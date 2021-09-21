@@ -1,0 +1,57 @@
+spring day02 
+
+IOC 注解
+	1. 把类交给spring托管
+		1.1 在类的上面打上注解 
+			@Component
+				@Controller
+				@Service
+				@Repository
+		1.2 如果只是打注解，然后没有给value属性赋值
+			那么spring会把类的名字(首字母小写)当成 对象的id名字
+				@Service("us") |  @Service
+		1.3 默认创建的实例对象还是单例的对象
+			要想做成多例，需要配合一个注解 @Scope("prototype")
+
+DI 注解
+	1. 让spring给属性赋值
+		1.1 在属性上打注解
+			@AutoWired
+				a. 按照类型在spring容器里面查找对象，如果找到只有一个，就直接注入
+				b. 如果找到多个(实现类)对象，那么会把属性名当成id的名字去找对象注入
+				c. 如果前面的两步都无法完成，就会报错。
+			@Qulifier
+				配合@AutoWired , 它主要是用来指定id名字
+
+				@Qulifier("us")
+				@AutoWired
+				private UserService us;
+
+			@Resource
+				等价于 @AutoWired +  @Qulifier
+
+				@Resource(name="us02")
+				private UserService us;
+
+
+			@Value 
+				主要是用来注入普通的数据，基本数据|字符串
+要想使用注解，需要打开扫描的开关：
+	<context:component-scan base-package="com.itheima"/>
+
+纯注解开发：
+
+	1. 完全替代applicationContext.xml
+
+	2. 使用一个类来替代xml文件
+
+		2.1 注解
+
+			@Configuration ： 表示这个类是一个核心配置类
+			@ComponentScan("com.itheima")
+			@PropertyScource("db.properties")
+			@Import(AppConfig01.class)
+			@Bean 
+				1. 打在方法上，会把方法的返回值交给spring管理。
+				2. 一般来说我们要想托管第三方的类|jar包里面的类，
+					在纯注解开发下，就需要用到这个@Bean .
